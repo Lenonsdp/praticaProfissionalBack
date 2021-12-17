@@ -1,0 +1,28 @@
+require('dotenv').config({
+	path: process.env.NODE_ENV == 'test' ? '.env.test' : '.env'
+})
+
+import express from 'express';
+import cors from 'cors';
+import routes from './routes';
+
+import './database';
+
+class App {
+	constructor() {
+		this.server = express();
+		this.midlewares();
+		this.routes();
+	}
+
+	midlewares() {
+		this.server.use(express.json());
+		this.server.use(cors());
+	}
+
+	routes() {
+		this.server.use(routes);
+	}
+}
+
+module.exports = new App().server;

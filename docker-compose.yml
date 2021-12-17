@@ -1,0 +1,35 @@
+version: ""
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+        - 5432:5432
+    volumes:
+      - ./data:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+     - app-connect
+  app:
+    env_file: 
+     - .env
+    build: .
+    depends_on:
+      - db
+    container_name: "promocoes-js"  
+    command: npm run-script dev
+    ports:
+      - 5000:5000
+    volumes:
+     - .:/src/app
+    environment:
+      DB_HOST: db
+    networks:
+     - app-connect
+networks:
+    app-connect:
+        driver: bridge
+volumes:
+    data:
